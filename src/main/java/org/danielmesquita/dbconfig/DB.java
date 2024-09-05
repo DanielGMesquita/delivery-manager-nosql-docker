@@ -1,43 +1,34 @@
 package org.danielmesquita.dbconfig;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Properties;
 
 public class DB {
+  private static MongoClient mongoClient;
 
-  private static Connection conn = null;
-
-  public static Connection getConnection() {
-    if (conn == null) {
-      try {
-        Properties props = loadProperties();
-        String url = props.getProperty("dburl");
-        String user = props.getProperty("dbuser");
-        String password = props.getProperty("dbpassword");
-        conn = DriverManager.getConnection(url, user, password);
-      } catch (SQLException e) {
-        throw new DbException(e.getMessage());
-      }
+  public static MongoDatabase getConnection() {
+    Properties props = loadProperties();
+    if (mongoClient == null) {
+      String uri = props.getProperty("mongodb.uri");
+      mongoClient = MongoClients.create(uri);
     }
-    return conn;
+
+    String databaseName = props.getProperty("mongodb.database");
+    return mongoClient.getDatabase(databaseName);
   }
 
   public static void closeConnection() {
-    if (conn != null) {
-      try {
-        conn.close();
-      } catch (SQLException e) {
-        throw new DbException(e.getMessage());
-      }
+    if (mongoClient != null) {
+      mongoClient.close();
     }
   }
 
   private static Properties loadProperties() {
-    try (FileInputStream fs = new FileInputStream("db.properties")) {
+    try (FileInputStream fs = new FileInputStream("src/main/resources/db.properties")) {
       Properties props = new Properties();
       props.load(fs);
       return props;

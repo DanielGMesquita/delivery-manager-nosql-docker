@@ -1,15 +1,26 @@
 package org.danielmesquita.entities;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 public class Product {
-  private long id;
+  private String id;
+
+  @NotNull(message = "Product name is required")
   private String name;
+
+  @NotNull(message = "Product price is required")
   private Double price;
+
+  @NotNull(message = "Product description is required")
+  @Size(min = 10, message = "Product description requires 10 characters at least")
   private String description;
+
   private String imageUri;
 
   public Product() {}
 
-  public Product(long id, String name, Double price, String description, String imageUri) {
+  public Product(String id, String name, Double price, String description, String imageUri) {
     this.id = id;
     this.name = name;
     this.price = price;
@@ -17,11 +28,11 @@ public class Product {
     this.imageUri = imageUri;
   }
 
-  public long getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(long id) {
+  public void setId(String id) {
     this.id = id;
   }
 
@@ -57,14 +68,7 @@ public class Product {
     this.imageUri = imageUri;
   }
 
-  @Override
-  public String toString() {
-    return "Product{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            ", price=" + price +
-            ", description='" + description + '\'' +
-            ", imageUri='" + imageUri + '\'' +
-            '}';
+  public boolean validateId(String id) {
+    return id != null && !id.isEmpty();
   }
 }
