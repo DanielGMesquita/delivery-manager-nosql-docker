@@ -14,21 +14,18 @@ public class ProductController {
 
   @Autowired private ProductService productService;
 
-  // Endpoint para criar um novo produto
   @PostMapping
   public ResponseEntity<Product> createProduct(@RequestBody Product product) {
     productService.insertProduct(product);
     return new ResponseEntity<>(product, HttpStatus.CREATED);
   }
 
-  // Endpoint para buscar todos os produtos
   @GetMapping
   public ResponseEntity<List<Product>> getAllProducts() {
     List<Product> products = productService.findAllProducts();
     return new ResponseEntity<>(products, HttpStatus.OK);
   }
 
-  // Endpoint para buscar um produto pelo ID
   @GetMapping("/{id}")
   public ResponseEntity<Product> getProductById(@PathVariable String id) {
     Product product = productService.findProductById(id);
@@ -37,16 +34,14 @@ public class ProductController {
         : new ResponseEntity<>(HttpStatus.NOT_FOUND);
   }
 
-  // Endpoint para atualizar um produto
   @PutMapping("/{id}")
   public ResponseEntity<Product> updateProduct(
       @PathVariable String id, @RequestBody Product product) {
-    product.setId(id); // Certifique-se de que o ID do produto seja o correto
+    product.setId(id);
     productService.updateProduct(product);
     return new ResponseEntity<>(product, HttpStatus.OK);
   }
 
-  // Endpoint para deletar um produto
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteProduct(@PathVariable String id) {
     productService.deleteProduct(id);
